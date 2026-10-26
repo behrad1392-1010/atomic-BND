@@ -1,0 +1,527 @@
+main {
+    direction: rtl;
+}
+
+@media screen and (min-width: 700px) {
+    main {
+        width: 60%;
+        margin: 0 auto;
+    }
+}
+
+.Teacherpassword-box {
+    display: flex;
+    border-radius: 16px;
+    border: rgb(33, 126, 197) solid 1px;
+    flex-direction: column;
+    background: rgb(32, 32, 47);
+    margin: 60px 40px;
+    padding: 20px 3px;
+    text-align: center;
+
+
+    .TeacherPassword-text {
+        color: #738196;
+    }
+    
+    .TeacherPassword-title {
+        margin-bottom: 10px;
+        color: rgb(33, 125, 217);
+    }
+
+    .TeacherPassword-label {
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+    }
+
+    .TeacherPassword-input {
+        width: 90%;
+        border-radius: 10px;
+        background: white;
+        padding: 8px 20px;
+        background: white;
+        display: block;
+        margin: 0 auto;
+        
+    }
+
+    .TeacherPassword-btn {
+        margin: 0 auto;
+        display: block;
+        width: 90%;
+        background: #57a1f5;
+        border: none;
+        padding: 8px 20px;
+        font-weight: 500;
+        font-size: 1rem;
+        border-radius: 6px;
+        transition: all 0.3s;
+        color: rgb(255, 255, 255);
+        margin-top: 20px;
+        
+
+        &:hover {
+            transform: translateY(-5px);
+            box-shadow: 2px ;
+            box-shadow: 0 5px 10px #327ccf;
+        }
+    }
+}
+
+.TeacherWelcome-box {
+    display: flex;
+    border-radius: 16px;
+    border: rgb(33, 126, 197) solid 1px;
+    flex-direction: column;
+    background: rgb(32, 32, 47);
+    margin: 60px 40px;
+    padding: 20px 3px;
+    text-align: center;
+    margin-top: 30px;
+
+    .TeacherWelcome-UpTitle {
+        margin-bottom: 10px;
+        color: rgb(33, 125, 217);
+    }
+
+    .TeacherWelcome-title {
+        margin-bottom: 10px;
+    }
+
+    .TeacherWelcome-text {
+        color: #738196;
+    }
+}
+
+.TeacherAbility-box {
+    margin-top: -50px;
+    display: flex;
+    justify-content: space-around;
+
+    .TeacherAbility-btn1,
+    .TeacherAbility-btn2 {
+        margin: 0 auto;
+        display: block;
+        background: #57a1f5;
+        border: none;
+        padding: 8px 20px;
+        font-weight: 500;
+        font-size: 1rem;
+        border-radius: 6px;
+        transition: all 0.3s;
+        color: rgb(255, 255, 255);
+        margin-top: 20px;
+        border: 2px solid transparent;
+
+        &:hover {
+            transform: translateY(-4px);
+            box-shadow: 2px ;
+            border-color: rgb(230, 230, 230);
+        }
+    }
+}
+
+/* ادامه استایل‌ها بر اساس تم قبلی */
+
+/* 1. ساخت تکلیف جدید (TeacherMadeHomework-box) */
+.TeacherMadeHomework-box {
+    display: flex;
+    flex-direction: column;
+    background: rgb(32, 32, 47);
+    border: rgb(33, 126, 197) solid 1px;
+    border-radius: 16px;
+    margin: 40px;
+    padding: 25px;
+    text-align: right; 
+
+    .TeacherMadeHomework-title {
+        color: rgb(33, 125, 217);
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .TeacherMadeHomework-lebel {
+        color: #e2e8f0;
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+        margin-top: 15px;
+    }
+
+    .TeacherMadeHomework-input,
+    .TeacherMadeHomework-textarea {
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #3e445e;
+        background: #ffffff;
+        color: #172337;
+        font-family: inherit;
+        outline: none;
+    }
+
+    .TeacherMadeHomework-textarea {
+        resize: none; 
+        min-height: 120px;
+    }
+
+    .TeacherMadeHomework-input:focus,
+    .TeacherMadeHomework-textarea:focus {
+        border-color: #57a1f5;
+        box-shadow: 0 0 0 3px rgba(87, 161, 245, 0.2);
+    }
+
+    .TeacherMadeHomework-btn {
+        margin-top: 20px;
+        background: #57a1f5;
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s;
+
+        &:hover {
+            background: #327ccf;
+            transform: translateY(-2px);
+        }
+    }
+
+    h2 {
+        margin-top: 30px;
+        color: #fff;
+        font-size: 1.3rem;
+        border-bottom: 1px solid #3e445e;
+        padding-bottom: 10px;
+    }
+}
+
+/* 2. لیست تکالیف ثبت شده (Homework List) */
+.TeacherMadeHomework-list-item { 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #2d2d3f;
+    padding: 15px;
+    border-radius: 12px;
+    margin-top: 15px;
+    border-right: 4px solid #57a1f5; 
+
+    p {
+        margin: 0;
+        color: #e2e8f0;
+        font-size: 0.9rem;
+        
+        &:first-child {
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+    }
+
+    button {
+        background: #ff4d4d;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        transition: background 0.3s;
+
+        &:hover {
+            background: #cc0000;
+        }
+    }
+}
+
+
+/* 1. تنظیمات اصلی برای جلوگیری از بزرگ شدن بیش از حد در لپ‌تاپ */
+main {
+    direction: rtl;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* محتوا را در مرکز افقی قرار می‌دهد */
+    padding: 20px;
+}
+
+/* استایل عمومی برای تمام باکس‌های اصلی (اصلاح شده برای لپ‌تاپ) */
+.Teacherpassword-box,
+.TeacherWelcome-box,
+.TeacherAbility-box,
+.TeacherMadeHomework-box {
+    width: 100%;
+    max-width: 800px; /* در لپ‌تاپ از 800 پیکسل بیشتر نمی‌شود */
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+}
+
+
+/* .TeacherWelcome-box,
+.TeacherAbility-box,
+.TeacherMadeHomework-box,
+.TeacherSubmissions-container {
+    display: nخ;
+}
+ */
+/* 2. اصلاح شده: باکس پسورد */
+.Teacherpassword-box {
+    /* display: none; */ /* با JS باز می‌شود */
+    flex-direction: column;
+    background: rgb(32, 32, 47);
+    border: rgb(33, 126, 197) solid 1px;
+    border-radius: 16px;
+    padding: 30px;
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: 40px;
+
+    .TeacherPassword-title {
+        margin-bottom: 10px;
+        color: rgb(33, 125, 217);
+        font-size: 1.5rem;
+    }
+
+    .TeacherPassword-input {
+        width: 100%;
+        max-width: 300px; /* اینپوت در لپ‌تاپ خیلی طولانی نشود */
+        border-radius: 10px;
+        padding: 10px 15px;
+        margin: 15px auto;
+        display: block;
+    }
+
+    .TeacherPassword-btn {
+        width: 100%;
+        max-width: 300px;
+        background: #57a1f5;
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 8px;
+        cursor: pointer;
+        margin: 10px auto;
+        transition: 0.3s;
+
+        &:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(87, 161, 245, 0.4);
+        }
+    }
+}
+
+/* 3. اصلاح شده: باکس خوش‌آمدگویی */
+.TeacherWelcome-box {
+    background: rgb(32, 32, 47);
+    border: rgb(33, 126, 197) solid 1px;
+    border-radius: 16px;
+    padding: 25px;
+    text-align: center;
+    margin-top: 20px;
+
+    .TeacherWelcome-title {
+        font-size: 1.6rem;
+        margin-bottom: 10px;
+    }
+}
+
+/* 4. اصلاح شده: دکمه‌های قابلیت‌ها */
+.TeacherAbility-box {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* فاصله بین دکمه‌ها */
+    margin-top: -30px; /* کمی روی باکس بالا کشیده شود */
+    margin-bottom: 30px;
+    width: 100%;
+    max-width: 800px;
+
+    .TeacherAbility-btn1,
+    .TeacherAbility-btn2 {
+        flex: 1; /* دکمه‌ها اندازه مساوی بگیرند */
+        max-width: 250px; /* اما خیلی بزرگ نشوند */
+        background: #57a1f5;
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 10px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+
+        &:hover {
+            transform: translateY(-3px);
+            background: #327ccf;
+        }
+    }
+}
+
+/* 5. اصلاح شده: بخش ساخت تکلیف */
+.TeacherMadeHomework-box {
+    background: rgb(32, 32, 47);
+    border: rgb(33, 126, 197) solid 1px;
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 50px;
+
+    .TeacherMadeHomework-input,
+    .TeacherMadeHomework-textarea {
+        width: 100%;
+        margin-bottom: 15px;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #3e445e;
+    }
+
+    .TeacherMadeHomework-btn {
+        width: 100%;
+        background: #57a1f5;
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+}
+
+/* 6. ریسپانسیو موبایل (برای صفحه‌های کوچک‌تر از 600 پیکسل) */
+@media (max-width: 600px) {
+    main {
+        padding: 10px;
+    }
+
+    .Teacherpassword-box,
+    .TeacherWelcome-box,
+    .TeacherMadeHomework-box {
+        margin: 20px 10px; /* در موبایل حاشیه‌ها کمتر شود */
+        padding: 15px;
+    }
+
+    .TeacherAbility-box {
+        flex-direction: column; /* دکمه‌ها در موبایل زیر هم قرار بگیرند */
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+
+        .TeacherAbility-btn1,
+        .TeacherAbility-btn2 {
+            width: 100%; /* تمام عرض موبایل */
+        }
+    }
+}
+
+/****************** home work of students *****************/
+
+.TeacherSubmissions-container {
+    width: 100%;
+    max-width: 800px; 
+    margin: 40px auto;
+    padding: 20px;
+    background: rgb(32, 32, 47);
+    border: rgb(33, 126, 197) solid 1px;
+    border-radius: 16px;
+
+    .TeacherSubmissions-title {
+        color: rgb(33, 125, 217);
+        text-align: center;
+        margin-bottom: 25px;
+        font-size: 1.4rem;
+    }
+
+    .TeacherSubmissions-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #2d2d3f; 
+        padding: 15px 20px;
+        border-radius: 12px;
+        margin-bottom: 15px;
+        transition: transform 0.2s, background 0.2s;
+
+        &:hover {
+            transform: scale(1.01);
+            background: #36364d;
+        }
+
+        .Submission-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+
+            .Student-name {
+                color: #ffffff;
+                font-weight: bold;
+                font-size: 1rem;
+            }
+
+            .Homework-name {
+                color: #b0b8d1;
+                font-size: 0.85rem;
+            }
+
+            .Submission-date {
+                color: #57a1f5;
+                font-size: 0.75rem;
+            }
+        }
+
+        .Submission-actions {
+            display: flex;
+            gap: 10px;
+
+            button {
+                padding: 8px 15px;
+                border-radius: 6px;
+                border: none;
+                cursor: pointer;
+                font-size: 0.85rem;
+                font-weight: 500;
+                transition: 0.3s;
+            }
+
+            .View-btn {
+                background: transparent;
+                border: 1px solid #57a1f5;
+                color: #57a1f5;
+
+                &:hover {
+                    background: #57a1f5;
+                    color: white;
+                }
+            }
+
+            .Grade-btn {
+                background: #28a745; 
+                color: white;
+
+                &:hover {
+                    background: #218838;
+                }
+            }
+        }
+    }
+}
+
+/* ریسپانسیو موبایل برای این بخش */
+@media (max-width: 600px) {
+    .TeacherSubmissions-item {
+        flex-direction: column; 
+        align-items: flex-start;
+        gap: 15px;
+
+        .Submission-actions {
+            width: 100%;
+            justify-content: space-between;
+            
+            button {
+                flex: 1;
+            }
+        }
+    }
+}
+
+
+/* یکسان‌سازی اندازه و ظاهر بخش ارسال‌ها با بخش تکالیف */
+
+

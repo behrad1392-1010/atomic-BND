@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="fa">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تکالیف دانش‌آموزان - Atomic-school</title>
+    <!-- استایل‌های شما -->
+    <link rel="stylesheet" href="../styles/reset.css" />
+    <link rel="stylesheet" href="../styles/styles.css" />
+    <link rel="stylesheet" href="../styles/call.css" />
+
+    <style>
+      /* استایل‌های اختصاصی و واکنش‌گرا برای بخش تکالیف */
+      .homework-main {
+        max-width: 800px;
+        margin: 30px auto;
+        padding: 0 15px;
+      }
+      .homeWork-title-box {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .homeWork-title {
+        font-size: 24px;
+        color: #dfe1e4;
+        margin-bottom: 10px;
+      }
+      .homeWork-text {
+        color: #7f8c8d;
+        font-size: 14px;
+      }
+      .hw-card {
+        background: #ffffff;
+        border: 1px solid #e1e8ed;
+        border-right: 5px solid #3498db;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+      .hw-card h3 {
+        margin: 0 0 10px 0;
+        color: #2c3e50;
+        font-size: 18px;
+      }
+      .hw-card p {
+        color: #555;
+        margin-bottom: 15px;
+        line-height: 1.6;
+      }
+      .hw-card small {
+        color: #95a5a6;
+      }
+      .toggle-submit-btn {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 13px;
+        transition: background 0.2s;
+        margin-top: 10px;
+      }
+      .toggle-submit-btn:hover {
+        background: #2980b9;
+      }
+      .student-submission-form {
+        background: #f8f9fa;
+        border: 1px solid #ddd;
+        padding: 15px;
+        margin-top: 15px;
+        border-radius: 6px;
+        display: none;
+      }
+      .homework-input {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-family: inherit;
+        box-sizing: border-box;
+      }
+      .submit-final-btn {
+        background: #27ae60;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-family: inherit;
+        width: 100%;
+      }
+      .submit-final-btn:hover {
+        background: #219653;
+      }
+      .success-msg {
+        background: #d4edda;
+        color: #155724;
+        padding: 10px;
+        border-radius: 4px;
+        margin-top: 10px;
+        display: none;
+        text-align: center;
+        font-size: 13px;
+      }
+      .no-hw {
+        text-align: center;
+        color: #7f8c8d;
+        padding: 30px;
+        background: #fdfdfd;
+        border: 1px dashed #ccc;
+        border-radius: 8px;
+      }
+
+      /* تنظیمات ریسپانسیو موبایل */
+      @media (max-width: 600px) {
+        .hw-card {
+          padding: 15px;
+        }
+        .homework-main {
+          margin: 15px auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!------------------  Header  ------------------>
+    <header class="Header">
+      <h2 class="navbar-title">مدرسه انرژی اتمی ⚛️</h2>
+      <nav class="navbar">
+        <a href="../../index.html" class="navbar-item" data-title="کد ها">
+          <img
+            src="../imges/code-solid-full.svg"
+            alt="code"
+            class="header-img"
+          />
+        </a>
+        <a href="./AbouteWe.html" data-title="درباره ما" class="navbar-item">
+          <img
+            src="../imges/user-solid-full.svg"
+            alt="code"
+            class="header-img"
+          />
+        </a>
+        <a href="./call.html" data-title="ارتباط با ما" class="navbar-item">
+          <img
+            src="../imges/phone-solid-full.svg"
+            alt="code"
+            class="header-img"
+          />
+        </a>
+        <a
+          href="./homework.html"
+          data-title="تکالیف"
+          class="navbar-item header-active-img"
+        >
+          <img
+            src="../imges/arrow-up-from-bracket-solid-full.svg"
+            alt="code"
+            class="header-img"
+          />
+        </a>
+        <a href="./Teacher.html" data-title="ورود معلم" class="navbar-item">
+          <img
+            src="../imges/right-to-bracket-solid-full.svg"
+            alt="code"
+            class="header-img"
+          />
+        </a>
+      </nav>
+    </header>
+
+    <main class="homework-main">
+      <div class="homeWork-title-box">
+        <h2 class="homeWork-title">تکالیف اعلام شده توسط استاد</h2>
+        <p class="homeWork-text">
+          برای ارسال پاسخ هر تکلیف، روی دکمه‌ی «ارسال پاسخ» زیر آن کلیک کنید.
+        </p>
+      </div>
+
+      <!-- محلی که تکالیف معلم به صورت داینامیک اینجا لیست می‌شود -->
+      <div id="homework-list"></div>
+    </main>
+
+    <script>
+      // ۱. خواندن تکالیف منتشر شده توسط معلم
+      const homeworks =
+        JSON.parse(localStorage.getItem("teacherHomeworks")) || [];
+      const listContainer = document.getElementById("homework-list");
+
+      if (listContainer) {
+        if (homeworks.length === 0) {
+          listContainer.innerHTML =
+            '<div class="no-hw">هنوز تکلیفی از طرف استاد منتشر نشده است.</div>';
+        } else {
+          let output = "";
+          homeworks.forEach((hw, index) => {
+            output += `
+              <div class="hw-card">
+                <h3>${hw.title}</h3>
+                <p>${hw.desc}</p>
+                <small>تاریخ انتشار: ${hw.date}</small>
+                <br>
+                <button type="button" class="toggle-submit-btn" onclick="toggleForm(${index})">ارسال پاسخ تکلیف</button>
+                
+                <!-- فرم ارسال اختصاصی برای همین تکلیف -->
+                <div id="form-box-${index}" class="student-submission-form">
+                  <form onsubmit="submitHomework(event, '${hw.title.replace(/'/g, "\\'")}')" autocomplete="off">
+                    <label class="homeWork-label">نام:</label>
+                    <input type="text" class="homework-input" id="name-${index}" placeholder="محمد" minlength="3" maxlength="25" required />
+                    
+                    <label class="homeWork-label">نام خانوادگی:</label>
+                    <input type="text" class="homework-input" id="lastname-${index}" placeholder="محمدی" minlength="3" maxlength="25" required />
+                    
+                    <label class="homeWork-label">لینک ویدیو در آپارات:</label>
+                    <input type="url" class="homework-input" id="link-${index}" placeholder="https://aparat.com/v/123456" required />
+                    
+                    <button type="submit" class="submit-final-btn">ارسال نهایی</button>
+                    <div id="success-msg-${index}" class="success-msg">تکلیف شما با موفقیت ثبت شد!</div>
+                  </form>
+                </div>
+              </div>
+            `;
+          });
+          listContainer.innerHTML = output;
+        }
+      }
+
+      // تابع باز و بسته کردن فرم ارسال برای هر کارت تکلیف
+      function toggleForm(index) {
+        const formBox = document.getElementById(`form-box-${index}`);
+        if (formBox.style.display === "block") {
+          formBox.style.display = "none";
+        } else {
+          formBox.style.display = "block";
+        }
+      }
+
+      // تابع ثبت نهایی پاسخ دانش‌آموز
+      function submitHomework(event, hwTitle) {
+        event.preventDefault();
+
+        // پیدا کردن ایندکس از روی رویداد یا به روش ساده‌تر با گرفتن مقادیر
+        // اینجا چون فرم درون خود کارت است، عنصر فرم را پیدا می‌کنیم
+        const formElement = event.target;
+        const inputs = formElement.querySelectorAll("input");
+
+        // استخراج مقادیر فیلدها
+        const nameInput = inputs[0].value;
+        const lastNameInput = inputs[1].value;
+        const linkInput = inputs[2].value;
+
+        // پیدا کردن عنصر پیام موفقیت اختصاصی همین فرم
+        // از طریق فرم والد می‌توانیم به آن دسترسی پیدا کنیم
+        const successMsg = formElement.querySelector(".success-msg");
+
+        // ساخت شیء جدید ارسال
+        const newSubmission = {
+          homeworkTitle: hwTitle,
+          fullName: `${nameInput} ${lastNameInput}`,
+          aparatLink: linkInput,
+          date: new Date().toLocaleDateString("fa-IR"),
+        };
+
+        // ذخیره در localStorage برای پنل معلم
+        let submissions =
+          JSON.parse(localStorage.getItem("studentSubmissions")) || [];
+        submissions.push(newSubmission);
+        localStorage.setItem("studentSubmissions", JSON.stringify(submissions));
+
+        // نمایش پیام موفقیت و پاکسازی فرم
+        successMsg.style.display = "block";
+        formElement.reset();
+
+        setTimeout(() => {
+          successMsg.style.display = "none";
+          formElement.parentElement.style.display = "none"; // بستن فرم بعد از ارسال موفق
+        }, 3000);
+      }
+    </script>
+  </body>
+</html>

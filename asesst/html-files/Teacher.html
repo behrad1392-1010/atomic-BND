@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="fa">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Atomic-school</title>
+    <link rel="stylesheet" href="../styles/reset.css" />
+    <link rel="stylesheet" href="../styles/styles.css" />
+    <link rel="stylesheet" href="../styles/Teachers.css" />
+    <style>
+      /* استایل کمکی برای پیام خطا */
+      .error-msg {
+        color: red;
+        font-size: 0.8rem;
+        margin-top: 5px;
+        text-align: center;
+      }
+      /* مخفی کردن بخش‌های اصلی تا زمانی که کد درست وارد شود */
+      #TeacherWelcome-box,
+      #TeacherAbility-box,
+      #TeacherMadeHomework-box,
+      #TeacherMadeHomeworkList-box,
+      #TeacherSubmissions-container {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!------------------  Header  ------------------>
+    <header class="Header">
+      <h2 class="navbar-title">مدرسه انرژی اتمی ⚛️</h2>
+      <nav class="navbar">
+        <a href="../../index.html" class="navbar-item" data-title="کد ها">
+          <img
+            src="../imges/code-solid-full.svg"
+            alt="code"
+            class="header-img"
+          />
+        </a>
+        <a href="./AbouteWe.html" data-title="درباره ما" class="navbar-item">
+          <img
+            src="../imges/user-solid-full.svg"
+            alt="user"
+            class="header-img"
+          />
+        </a>
+        <a href="./call.html" data-title="ارتباط با ما" class="navbar-item">
+          <img
+            src="../imges/phone-solid-full.svg"
+            alt="phone"
+            class="header-img"
+          />
+        </a>
+        <a href="./homework.html" data-title="تکالیف" class="navbar-item">
+          <img
+            src="../imges/arrow-up-from-bracket-solid-full.svg"
+            alt="homework"
+            class="header-img"
+          />
+        </a>
+        <a
+          href="./Teacher.html"
+          data-title="ورود معلم"
+          class="navbar-item header-active-img"
+        >
+          <img
+            src="../imges/right-to-bracket-solid-full.svg"
+            alt="login"
+            class="header-img"
+          />
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      <!-- بخش ورود با رمز -->
+      <div class="Teacherpassword-box" id="Teacherpassword-box">
+        <h2 class="TeacherPassword-title">🔐 دسترسی مدیریت</h2>
+        <p class="TeacherPassword-text">برای ورود کد 5 رقمی را وارد کنید</p>
+        <label for="Password" class="TeacherPassword-label">کد ورود</label>
+        <input
+          type="password"
+          id="Password"
+          class="TeacherPassword-input"
+          placeholder="00000"
+        />
+        <p
+          id="error-msg"
+          class="error-msg"
+          style="color: red; margin-top: 5px"
+        ></p>
+        <button type="button" class="TeacherPassword-btn" onclick="checkCode()">
+          ورود به پنل
+        </button>
+      </div>
+
+      <!-- بخش خوش‌آمدگویی -->
+      <div
+        class="TeacherWelcome-box"
+        id="TeacherWelcome-box"
+        style="display: none"
+      >
+        <p class="TeacherWelcome-UpTitle">مدیریت کلاس</p>
+        <h2 class="TeacherWelcome-title">پنل استاد</h2>
+        <p class="TeacherWelcome-text">آموزش‌ها و تکالیف کلاس را مدیریت کن.</p>
+        <!-- دکمه خروج -->
+        <button
+          type="button"
+          class="Logout-btn"
+          onclick="logout()"
+          style="
+            margin-top: 10px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+          "
+        >
+          خروج از حساب
+        </button>
+      </div>
+
+      <!-- بخش دکمه‌های عملیاتی -->
+      <div
+        class="TeacherAbility-box"
+        id="TeacherAbility-box"
+        style="
+          display: none;
+          gap: 10px;
+          flex-wrap: wrap;
+          justify-content: center;
+          margin: 20px 0;
+        "
+      >
+        <button
+          type="button"
+          class="TeacherAbility-btn1"
+          onclick="showSection('TeacherMadeHomework-box')"
+        >
+          افزودن تکلیف
+        </button>
+        <button
+          type="button"
+          class="TeacherAbility-btn2"
+          onclick="showSection('TeacherMadeHomeworkList-box')"
+        >
+          لیست تکالیف من
+        </button>
+        <button
+          type="button"
+          class="TeacherAbility-btn2"
+          onclick="showSection('TeacherSubmissions-container')"
+        >
+          ارسال های دانش آموزان
+        </button>
+      </div>
+
+      <!-- بخش ساخت تکلیف -->
+      <div
+        class="TeacherMadeHomework-box panel-section"
+        id="TeacherMadeHomework-box"
+        style="display: none"
+      >
+        <h2 class="TeacherMadeHomework-title">ساخت تکلیف جدید</h2>
+
+        <label for="hw-title-input" class="TeacherMadeHomework-lebel"
+          >عنوان تکلیف</label
+        >
+        <input
+          type="text"
+          id="hw-title-input"
+          class="TeacherMadeHomework-input"
+        />
+
+        <label for="hw-desc-input" class="TeacherMadeHomework-lebel"
+          >توضیحات تکلیف</label
+        >
+        <textarea
+          id="hw-desc-input"
+          rows="5"
+          class="TeacherMadeHomework-textarea"
+        ></textarea>
+
+        <button
+          type="button"
+          class="TeacherMadeHomework-btn"
+          onclick="publishHomework()"
+        >
+          انتشار تکلیف
+        </button>
+      </div>
+
+      <!-- بخش لیست تکالیف منتشر شده توسط معلم -->
+      <div
+        class="TeacherMadeHomeworkList-container panel-section"
+        id="TeacherMadeHomeworkList-box"
+        style="display: none; max-width: 600px; margin: 0 auto; padding: 20px"
+      >
+        <h2 class="TeacherMadeHomework-title">تکالیف منتشر شده توسط شما</h2>
+        <div id="teacher-homeworks-list"></div>
+      </div>
+
+      <!-- بخش تسلیم‌های دانش‌آموزان -->
+      <div
+        class="TeacherSubmissions-container panel-section"
+        id="TeacherSubmissions-container"
+        style="display: none; max-width: 650px; margin: 0 auto; padding: 20px"
+      >
+        <h2
+          class="TeacherSubmissions-title"
+          style="margin-bottom: 20px; text-align: center"
+        >
+          ارسال‌های دانش‌آموزان
+        </h2>
+        <!-- آیتم‌ها به صورت داینامیک از لوکال استوریج لود می‌شوند -->
+        <div id="teacher-submissions-list"></div>
+      </div>
+    </main>
+
+    <script>
+      const SECRET_PIN = "60059";
+
+      // بررسی وضعیت ورود به محض بارگذاری صفحه
+      window.onload = function () {
+        if (localStorage.getItem("teacherLoggedIn") === "true") {
+          showPanel();
+        }
+      };
+
+      function checkCode() {
+        const passwordInput = document.getElementById("Password");
+        const errorMsg = document.getElementById("error-msg");
+
+        if (passwordInput.value === SECRET_PIN) {
+          localStorage.setItem("teacherLoggedIn", "true");
+          showPanel();
+        } else {
+          errorMsg.textContent = "کد وارد شده اشتباه است!";
+          passwordInput.value = "";
+        }
+      }
+
+      function showPanel() {
+        document.getElementById("Teacherpassword-box").style.display = "none";
+        document.getElementById("TeacherWelcome-box").style.display = "block";
+        document.getElementById("TeacherAbility-box").style.display = "flex";
+        showSection("TeacherMadeHomework-box");
+      }
+
+      // تابع جابجایی بین بخش‌ها
+      function showSection(sectionId) {
+        const sections = document.querySelectorAll(".panel-section");
+        sections.forEach((sec) => {
+          sec.style.display = "none";
+        });
+
+        const target = document.getElementById(sectionId);
+        if (target) {
+          target.style.display = "block";
+        }
+
+        // اگر بخش لیست تکالیف معلم بود، آن را به‌روز کن
+        if (sectionId === "TeacherMadeHomeworkList-box") {
+          loadTeacherHomeworksList();
+        }
+
+        // اگر بخش ارسال‌های دانش‌آموزان بود، لیست را به‌روز کن
+        if (sectionId === "TeacherSubmissions-container") {
+          loadSubmissionsToTeacherPanel();
+        }
+      }
+
+      // تابع انتشار تکلیف توسط معلم
+      function publishHomework() {
+        const titleInput = document.getElementById("hw-title-input");
+        const descInput = document.getElementById("hw-desc-input");
+
+        if (!titleInput.value || !descInput.value) {
+          alert("لطفاً عنوان و توضیحات تکلیف را وارد کنید!");
+          return;
+        }
+
+        let homeworks =
+          JSON.parse(localStorage.getItem("teacherHomeworks")) || [];
+
+        homeworks.push({
+          title: titleInput.value,
+          desc: descInput.value,
+          date: new Date().toLocaleDateString("fa-IR"),
+        });
+
+        localStorage.setItem("teacherHomeworks", JSON.stringify(homeworks));
+
+        alert("تکلیف با موفقیت منتشر شد!");
+        titleInput.value = "";
+        descInput.value = "";
+      }
+
+      // تابع بارگذاری تکالیف ساخته شده توسط معلم در پنل خودش
+      function loadTeacherHomeworksList() {
+        const container = document.getElementById("teacher-homeworks-list");
+        let homeworks =
+          JSON.parse(localStorage.getItem("teacherHomeworks")) || [];
+
+        if (homeworks.length === 0) {
+          container.innerHTML =
+            '<p style="text-align:center; padding: 20px; color: gray;">هنوز تکلیفی منتشر نکرده‌اید.</p>';
+          return;
+        }
+
+        let html = "";
+        homeworks.forEach((hw, index) => {
+          html += `
+            <div style="background: #f9f9f9; border: 1px solid #ddd; padding: 15px; margin-bottom: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.03);">
+              <div style="padding-left: 10px;">
+                <h4 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 1.05rem;">${hw.title}</h4>
+                <p style="margin: 0 0 6px 0; color: #555; font-size: 0.95rem; line-height: 1.5;">${hw.desc}</p>
+                <small style="color: #888; font-size: 0.8rem;">تاریخ انتشار: ${hw.date}</small>
+              </div>
+              <button onclick="deleteTeacherHomework(${index})" style="background: #e74c3c; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; height: fit-content; font-size: 0.9rem; transition: background 0.2s;">حذف</button>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+      }
+
+      // تابع حذف تکلیف منتشر شده توسط معلم
+      window.deleteTeacherHomework = function (index) {
+        if (confirm("آیا از حذف این تکلیف مطمئن هستید؟")) {
+          let homeworks =
+            JSON.parse(localStorage.getItem("teacherHomeworks")) || [];
+          homeworks.splice(index, 1);
+          localStorage.setItem("teacherHomeworks", JSON.stringify(homeworks));
+          loadTeacherHomeworksList();
+        }
+      };
+
+      // تابع بارگذاری ارسال‌های دانش‌آموزان در پنل معلم با استایل استاندارد و فاصله دار
+      function loadSubmissionsToTeacherPanel() {
+        const container = document.getElementById("teacher-submissions-list");
+        let submissions =
+          JSON.parse(localStorage.getItem("studentSubmissions")) || [];
+
+        if (submissions.length === 0) {
+          container.innerHTML =
+            '<p style="text-align:center; padding: 30px; color: gray; font-size: 0.95rem;">هنوز ارسالی از طرف دانش‌آموزان ثبت نشده است.</p>';
+          return;
+        }
+
+        let htmlContent = "";
+
+        submissions.forEach((sub, index) => {
+          htmlContent += `
+            <div class="TeacherSubmissions-item" style="background: #ffffff; border: 1px solid #e0e0e0; padding: 18px 20px; margin-bottom: 14px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
+              <div class="Submission-info" style="padding-left: 15px;">
+                <span class="Student-name" style="display: block; font-weight: bold; font-size: 1.05rem; color: #2c3e50; margin-bottom: 4px;">${sub.fullName}</span>
+                <span class="Homework-name" style="display: block; font-size: 0.9rem; color: #2980b9; margin-bottom: 6px;">تکلیف: ${sub.homeworkTitle || "نامشخص"}</span>
+                <a href="${sub.aparatLink}" target="_blank" style="display: inline-block; color: #3498db; text-decoration: none; font-size: 0.9rem; margin-bottom: 6px; font-weight: 500;">🔗 مشاهده ویدیو در آپارات</a>
+                <span class="Submission-date" style="display: block; font-size: 0.75rem; color: #888;">تاریخ ارسال: ${sub.date}</span>
+              </div>
+              <div class="Submission-actions" style="display: flex; gap: 8px; align-items: center; min-width: fit-content;">
+                <button class="Delete-btn" onclick="deleteSubmission(${index})" style="background: #e74c3c; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">حذف</button>
+              </div>
+            </div>
+          `;
+        });
+
+        container.innerHTML = htmlContent;
+      }
+
+      // تابع حذف ارسال دانش‌آموز توسط معلم
+      function deleteSubmission(index) {
+        if (confirm("آیا از حذف این ارسال مطمئن هستید؟")) {
+          let submissions =
+            JSON.parse(localStorage.getItem("studentSubmissions")) || [];
+          submissions.splice(index, 1);
+          localStorage.setItem(
+            "studentSubmissions",
+            JSON.stringify(submissions),
+          );
+          loadSubmissionsToTeacherPanel();
+        }
+      }
+
+      // خروج از حساب
+      function logout() {
+        localStorage.removeItem("teacherLoggedIn");
+        location.reload();
+      }
+    </script>
+  </body>
+</html>
