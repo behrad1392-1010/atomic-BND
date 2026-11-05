@@ -265,15 +265,31 @@
         const formElement = event.target;
         const inputs = formElement.querySelectorAll("input");
 
+        // گرفتن مقادیر از اینپوت‌ها
         const nameInput = inputs[0].value;
         const lastNameInput = inputs[1].value;
         const linkInput = inputs[2].value;
 
+        // المان‌های نمایش وضعیت
         const successMsg = formElement.querySelector(".success-msg");
         const errorMsg = document.getElementById(`error-msg-${homeworkId}`);
+
+        // ریست کردن وضعیت قبل از شروع درخواست جدید
         errorMsg.style.display = "none";
+        errorMsg.textContent = "";
+        successMsg.style.display = "none";
+
+        // ایجاد یک کنترلر برای مدیریت زمان انتظار (اگر سرور بیش از ۳۰ ثانیه پاسخ نداد)
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000);
 
         try {
+          // نمایش وضعیت در حال ارسال روی دکمه یا فرم
+          const submitBtn = formElement.querySelector(".submit-final-btn");
+          const originalBtnText = submitBtn.textContent;
+          submitBtn.disabled = true;
+          submitBtn.textContent = "در حال ارسال...";
+
           const res = await fetch(`${API_BASE}/submissions`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -283,25 +299,45 @@
               last_name: lastNameInput,
               aparat_link: linkInput,
             }),
+            signal: controller.signal, // اتصال تایم‌اوت به درخواست
           });
+
+          clearTimeout(timeoutId); // اگر پاسخ آمد، تایمر را پاک کن
+
           const data = await res.json();
 
           if (!res.ok) {
-            errorMsg.textContent = data.error || "خطا در ارسال تکلیف";
-            errorMsg.style.display = "block";
-            return;
+            // اگر سرور پاسخ داد ولی ارور داشت (مثلاً ارور دیتابیس یا اعتبارسنجی)
+            throw new Error(data.error || "خطا در ثبت تکلیف");
           }
 
+          // اگر همه چیز عالی بود
           successMsg.style.display = "block";
           formElement.reset();
+
+          // غیرفعال کردن فرم بعد از موفقیت
+          submitBtn.disabled = true;
 
           setTimeout(() => {
             successMsg.style.display = "none";
             formElement.parentElement.style.display = "none";
           }, 3000);
         } catch (err) {
-          errorMsg.textContent = "ارتباط با سرور برقرار نشد.";
+          // مدیریت انواع خطاها
+          if (err.name === "AbortError") {
+            errorMsg.textContent =
+              "زمان پاسخگویی سرور تمام شد (احتمالاً سرور در حال بیدار شدن است). دوباره تلاش کنید.";
+          } else {
+            errorMsg.textContent = err.message || "خطا در ارتباط با سرور.";
+          }
           errorMsg.style.display = "block";
+
+          // فعال کردن مجدد دکمه برای تلاش دوباره
+          const submitBtn = formElement.querySelector(".submit-final-btn");
+          submitBtn.disabled = false;
+          submitBtn.textContent = "ارسال نهایی";
+        } finally {
+          clearTimeout(timeoutId);
         }
       }
     </script>
