@@ -219,27 +219,48 @@
       </div>
     </main>
 
+    <script src="../config.js"></script>
     <script>
-      const SECRET_PIN = "60059";
-
       // بررسی وضعیت ورود به محض بارگذاری صفحه
       window.onload = function () {
-        if (localStorage.getItem("teacherLoggedIn") === "true") {
+        if (localStorage.getItem("teacherToken")) {
           showPanel();
         }
       };
 
-      function checkCode() {
+      async function checkCode() {
         const passwordInput = document.getElementById("Password");
         const errorMsg = document.getElementById("error-msg");
+        errorMsg.textContent = "";
 
-        if (passwordInput.value === SECRET_PIN) {
-          localStorage.setItem("teacherLoggedIn", "true");
+        try {
+          const res = await fetch(`${API_BASE}/auth/teacher-login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ pin: passwordInput.value }),
+          });
+          const data = await res.json();
+
+          if (!res.ok) {
+            errorMsg.textContent = data.error || "کد وارد شده اشتباه است!";
+            passwordInput.value = "";
+            return;
+          }
+
+          localStorage.setItem("teacherToken", data.token);
           showPanel();
-        } else {
-          errorMsg.textContent = "کد وارد شده اشتباه است!";
-          passwordInput.value = "";
+        } catch (err) {
+          errorMsg.textContent =
+            "ارتباط با سرور برقرار نشد. مطمئن شوید بک‌اند روشن است.";
         }
+      }
+
+      // هدر احراز هویت برای درخواست‌های محافظت‌شده
+      function authHeaders() {
+        return {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("teacherToken")}`,
+        };
       }
 
       function showPanel() {
@@ -273,7 +294,7 @@
       }
 
       // تابع انتشار تکلیف توسط معلم
-      function publishHomework() {
+      async function publishHomework() {
         const titleInput = document.getElementById("hw-title-input");
         const descInput = document.getElementById("hw-desc-input");
 
@@ -282,27 +303,45 @@
           return;
         }
 
-        let homeworks =
-          JSON.parse(localStorage.getItem("teacherHomeworks")) || [];
+        try {
+          const res = await fetch(`${API_BASE}/homework`, {
+            method: "POST",
+            headers: authHeaders(),
+            body: JSON.stringify({
+              title: titleInput.value,
+              description: descInput.value,
+            }),
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            alert(data.error || "خطا در انتشار تکلیف");
+            return;
+          }
 
-        homeworks.push({
-          title: titleInput.value,
-          desc: descInput.value,
-          date: new Date().toLocaleDateString("fa-IR"),
-        });
-
-        localStorage.setItem("teacherHomeworks", JSON.stringify(homeworks));
-
-        alert("تکلیف با موفقیت منتشر شد!");
-        titleInput.value = "";
-        descInput.value = "";
+          alert("تکلیف با موفقیت منتشر شد!");
+          titleInput.value = "";
+          descInput.value = "";
+        } catch (err) {
+          alert("ارتباط با سرور برقرار نشد.");
+        }
       }
 
       // تابع بارگذاری تکالیف ساخته شده توسط معلم در پنل خودش
-      function loadTeacherHomeworksList() {
+      async function loadTeacherHomeworksList() {
         const container = document.getElementById("teacher-homeworks-list");
-        let homeworks =
-          JSON.parse(localStorage.getItem("teacherHomeworks")) || [];
+        container.innerHTML =
+          '<p style="text-align:center; padding:20px; color:gray;">در حال بارگذاری...</p>';
+
+        let homeworks = [];
+        try {
+          const res = await fetch(`${API_BASE}/homework`);
+          const data = await res.json();
+          homeworks = data.homeworks || [];
+        } catch (err) {
+          container.innerHTML =
+            '<p style="text-align:center; padding:20px; color:red;">ارتباط با سرور برقرار نشد.</p>';
+          return;
+        }
 
         if (homeworks.length === 0) {
           container.innerHTML =
@@ -311,15 +350,16 @@
         }
 
         let html = "";
-        homeworks.forEach((hw, index) => {
+        homeworks.forEach((hw) => {
+          const dateLabel = new Date(hw.created_at).toLocaleDateString("fa-IR");
           html += `
             <div style="background: #f9f9f9; border: 1px solid #ddd; padding: 15px; margin-bottom: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.03);">
               <div style="padding-left: 10px;">
                 <h4 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 1.05rem;">${hw.title}</h4>
-                <p style="margin: 0 0 6px 0; color: #555; font-size: 0.95rem; line-height: 1.5;">${hw.desc}</p>
-                <small style="color: #888; font-size: 0.8rem;">تاریخ انتشار: ${hw.date}</small>
+                <p style="margin: 0 0 6px 0; color: #555; font-size: 0.95rem; line-height: 1.5;">${hw.description || ""}</p>
+                <small style="color: #888; font-size: 0.8rem;">تاریخ انتشار: ${dateLabel}</small>
               </div>
-              <button onclick="deleteTeacherHomework(${index})" style="background: #e74c3c; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; height: fit-content; font-size: 0.9rem; transition: background 0.2s;">حذف</button>
+              <button onclick="deleteTeacherHomework(${hw.id})" style="background: #e74c3c; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; height: fit-content; font-size: 0.9rem; transition: background 0.2s;">حذف</button>
             </div>
           `;
         });
@@ -328,21 +368,46 @@
       }
 
       // تابع حذف تکلیف منتشر شده توسط معلم
-      window.deleteTeacherHomework = function (index) {
-        if (confirm("آیا از حذف این تکلیف مطمئن هستید؟")) {
-          let homeworks =
-            JSON.parse(localStorage.getItem("teacherHomeworks")) || [];
-          homeworks.splice(index, 1);
-          localStorage.setItem("teacherHomeworks", JSON.stringify(homeworks));
+      window.deleteTeacherHomework = async function (id) {
+        if (!confirm("آیا از حذف این تکلیف مطمئن هستید؟")) return;
+        try {
+          const res = await fetch(`${API_BASE}/homework/${id}`, {
+            method: "DELETE",
+            headers: authHeaders(),
+          });
+          if (!res.ok) {
+            const data = await res.json();
+            alert(data.error || "خطا در حذف تکلیف");
+            return;
+          }
           loadTeacherHomeworksList();
+        } catch (err) {
+          alert("ارتباط با سرور برقرار نشد.");
         }
       };
 
       // تابع بارگذاری ارسال‌های دانش‌آموزان در پنل معلم با استایل استاندارد و فاصله دار
-      function loadSubmissionsToTeacherPanel() {
+      async function loadSubmissionsToTeacherPanel() {
         const container = document.getElementById("teacher-submissions-list");
-        let submissions =
-          JSON.parse(localStorage.getItem("studentSubmissions")) || [];
+        container.innerHTML =
+          '<p style="text-align:center; padding:20px; color:gray;">در حال بارگذاری...</p>';
+
+        let submissions = [];
+        try {
+          const res = await fetch(`${API_BASE}/submissions`, {
+            headers: authHeaders(),
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            container.innerHTML = `<p style="text-align:center; padding:20px; color:red;">${data.error || "خطا در دریافت ارسال‌ها"}</p>`;
+            return;
+          }
+          submissions = data.submissions || [];
+        } catch (err) {
+          container.innerHTML =
+            '<p style="text-align:center; padding:20px; color:red;">ارتباط با سرور برقرار نشد.</p>';
+          return;
+        }
 
         if (submissions.length === 0) {
           container.innerHTML =
@@ -352,17 +417,23 @@
 
         let htmlContent = "";
 
-        submissions.forEach((sub, index) => {
+        submissions.forEach((sub) => {
+          const dateLabel = new Date(sub.created_at).toLocaleDateString(
+            "fa-IR",
+          );
+          const gradeLabel =
+            sub.grade != null ? `نمره: ${sub.grade}` : "هنوز نمره داده نشده";
           htmlContent += `
-            <div class="TeacherSubmissions-item" style="background: #ffffff; border: 1px solid #e0e0e0; padding: 18px 20px; margin-bottom: 14px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
+            <div class="TeacherSubmissions-item" style="background: #ffffff; border: 1px solid #e0e0e0; padding: 18px 20px; margin-bottom: 14px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.04); flex-wrap: wrap; gap: 10px;">
               <div class="Submission-info" style="padding-left: 15px;">
-                <span class="Student-name" style="display: block; font-weight: bold; font-size: 1.05rem; color: #2c3e50; margin-bottom: 4px;">${sub.fullName}</span>
-                <span class="Homework-name" style="display: block; font-size: 0.9rem; color: #2980b9; margin-bottom: 6px;">تکلیف: ${sub.homeworkTitle || "نامشخص"}</span>
-                <a href="${sub.aparatLink}" target="_blank" style="display: inline-block; color: #3498db; text-decoration: none; font-size: 0.9rem; margin-bottom: 6px; font-weight: 500;">🔗 مشاهده ویدیو در آپارات</a>
-                <span class="Submission-date" style="display: block; font-size: 0.75rem; color: #888;">تاریخ ارسال: ${sub.date}</span>
+                <span class="Student-name" style="display: block; font-weight: bold; font-size: 1.05rem; color: #2c3e50; margin-bottom: 4px;">${sub.first_name} ${sub.last_name}</span>
+                <span class="Homework-name" style="display: block; font-size: 0.9rem; color: #2980b9; margin-bottom: 6px;">تکلیف: ${sub.homework_title || "نامشخص"}</span>
+                <a href="${sub.aparat_link}" target="_blank" style="display: inline-block; color: #3498db; text-decoration: none; font-size: 0.9rem; margin-bottom: 6px; font-weight: 500;">🔗 مشاهده ویدیو در آپارات</a>
+                <span class="Submission-date" style="display: block; font-size: 0.75rem; color: #888;">تاریخ ارسال: ${dateLabel} — ${gradeLabel}</span>
               </div>
               <div class="Submission-actions" style="display: flex; gap: 8px; align-items: center; min-width: fit-content;">
-                <button class="Delete-btn" onclick="deleteSubmission(${index})" style="background: #e74c3c; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">حذف</button>
+                <button class="Grade-btn" onclick="gradeSubmission(${sub.id})" style="background: #27ae60; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">ثبت نمره</button>
+                <button class="Delete-btn" onclick="deleteSubmission(${sub.id})" style="background: #e74c3c; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">حذف</button>
               </div>
             </div>
           `;
@@ -371,23 +442,51 @@
         container.innerHTML = htmlContent;
       }
 
-      // تابع حذف ارسال دانش‌آموز توسط معلم
-      function deleteSubmission(index) {
-        if (confirm("آیا از حذف این ارسال مطمئن هستید؟")) {
-          let submissions =
-            JSON.parse(localStorage.getItem("studentSubmissions")) || [];
-          submissions.splice(index, 1);
-          localStorage.setItem(
-            "studentSubmissions",
-            JSON.stringify(submissions),
-          );
+      // تابع ثبت نمره و بازخورد برای یک ارسال
+      async function gradeSubmission(id) {
+        const grade = prompt("نمره را وارد کنید (مثلاً 18.5):");
+        if (grade === null) return;
+        const feedback = prompt("بازخورد (اختیاری):") || "";
+
+        try {
+          const res = await fetch(`${API_BASE}/submissions/${id}`, {
+            method: "PATCH",
+            headers: authHeaders(),
+            body: JSON.stringify({ grade: Number(grade), feedback }),
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            alert(data.error || "خطا در ثبت نمره");
+            return;
+          }
           loadSubmissionsToTeacherPanel();
+        } catch (err) {
+          alert("ارتباط با سرور برقرار نشد.");
+        }
+      }
+
+      // تابع حذف ارسال دانش‌آموز توسط معلم
+      async function deleteSubmission(id) {
+        if (!confirm("آیا از حذف این ارسال مطمئن هستید؟")) return;
+        try {
+          const res = await fetch(`${API_BASE}/submissions/${id}`, {
+            method: "DELETE",
+            headers: authHeaders(),
+          });
+          if (!res.ok) {
+            const data = await res.json();
+            alert(data.error || "خطا در حذف ارسال");
+            return;
+          }
+          loadSubmissionsToTeacherPanel();
+        } catch (err) {
+          alert("ارتباط با سرور برقرار نشد.");
         }
       }
 
       // خروج از حساب
       function logout() {
-        localStorage.removeItem("teacherLoggedIn");
+        localStorage.removeItem("teacherToken");
         location.reload();
       }
     </script>
